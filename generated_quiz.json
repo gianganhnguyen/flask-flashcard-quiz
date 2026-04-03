@@ -1,0 +1,118 @@
+{
+  "created_at": "2026-04-03T14:53:24.392967",
+  "language": "en",
+  "question_count": 10,
+  "source_preview": "find the theme",
+  "questions": [
+    {
+      "question": "What is the primary definition of a 'theme' in literature or art?",
+      "options": [
+        "The main character of a story",
+        "The setting where the story takes place",
+        "The central idea or underlying message explored in a work",
+        "A summary of the plot events"
+      ],
+      "correct_answer": "The central idea or underlying message explored in a work",
+      "explanation": "A theme is the overarching message or core idea that a work conveys, often a universal truth or observation about life."
+    },
+    {
+      "question": "Why is it important to 'find the theme' in a piece of content?",
+      "options": [
+        "To memorize all the specific details",
+        "To understand the deeper meaning and purpose of the work",
+        "To identify the author's biography",
+        "To count the number of words used"
+      ],
+      "correct_answer": "To understand the deeper meaning and purpose of the work",
+      "explanation": "Identifying the theme helps readers or viewers grasp the underlying message and connect with the work on a more profound level, moving beyond surface-level plot points."
+    },
+    {
+      "question": "Which of the following best describes the nature of a theme?",
+      "options": [
+        "It is always stated directly by the author",
+        "It is a single word topic, like 'love' or 'war'",
+        "It is an interpretive statement about life or human nature",
+        "It is a character's personal opinion"
+      ],
+      "correct_answer": "It is an interpretive statement about life or human nature",
+      "explanation": "Themes are usually not single words but complete statements that offer insights or observations about universal aspects of life, human experience, or society."
+    },
+    {
+      "question": "When trying to 'find the theme,' what should one primarily analyze?",
+      "options": [
+        "The font style and page layout",
+        "Recurring symbols, motifs, character development, and plot conflicts",
+        "The total length of the text",
+        "The author's publishing history"
+      ],
+      "correct_answer": "Recurring symbols, motifs, character development, and plot conflicts",
+      "explanation": "Themes are often revealed through repeated elements, how characters change, and the main struggles presented in the narrative."
+    },
+    {
+      "question": "What distinguishes a theme from a mere topic?",
+      "options": [
+        "A topic is broader than a theme",
+        "A theme is specific and doesn't apply to other works",
+        "A theme makes a statement about a topic, while a topic is just the subject matter",
+        "A topic always includes a moral lesson"
+      ],
+      "correct_answer": "A theme makes a statement about a topic, while a topic is just the subject matter",
+      "explanation": "A topic is a general subject (e.g., 'love'), while a theme is a complete statement about that subject (e.g., 'Love requires sacrifice' or 'Unconditional love can overcome adversity')."
+    },
+    {
+      "question": "Which of these is NOT a good practice when articulating a theme?",
+      "options": [
+        "Stating it as a complete sentence",
+        "Ensuring it is universal and applicable beyond the specific work",
+        "Making it specific to only one character's experience",
+        "Supporting it with evidence from the text"
+      ],
+      "correct_answer": "Making it specific to only one character's experience",
+      "explanation": "A good theme is generally universal, meaning it applies broadly to human experience, not just to a single character or isolated event within the story."
+    },
+    {
+      "question": "In the process of 'finding the theme,' what role do character actions and dialogue play?",
+      "options": [
+        "They are irrelevant to the theme",
+        "They only serve to advance the plot",
+        "They often reveal the values, beliefs, and consequences that contribute to the theme",
+        "They distract from the main idea"
+      ],
+      "correct_answer": "They often reveal the values, beliefs, and consequences that contribute to the theme",
+      "explanation": "Characters' choices, behaviors, and spoken words are crucial in demonstrating the underlying messages and ideas the work explores."
+    },
+    {
+      "question": "Which question can help guide you in 'finding the theme'?",
+      "options": [
+        "What is the author's favorite color?",
+        "What is the plot's most exciting moment?",
+        "What message about life or humanity does this work convey?",
+        "How many chapters are in the book?"
+      ],
+      "correct_answer": "What message about life or humanity does this work convey?",
+      "explanation": "To identify the theme, one must look beyond surface details and consider the broader implications and insights the work offers about human experience."
+    },
+    {
+      "question": "A well-stated theme should typically be:",
+      "options": [
+        "A question mark at the end",
+        "A single proper noun",
+        "A general statement about life, society, or human nature",
+        "A plot summary"
+      ],
+      "correct_answer": "A general statement about life, society, or human nature",
+      "explanation": "Themes encapsulate universal truths or observations, making them broad statements applicable to various contexts, not just a specific plot point."
+    },
+    {
+      "question": "What is the final step in effectively 'finding the theme' of a work?",
+      "options": [
+        "Creating a new ending for the story",
+        "Confirming the theme by finding ample textual evidence to support it",
+        "Ignoring any conflicting interpretations",
+        "Asking the author directly"
+      ],
+      "correct_answer": "Confirming the theme by finding ample textual evidence to support it",
+      "explanation": "Once a potential theme is identified, it must be validated by thoroughly examining the text for recurring patterns, symbols, character arcs, and plot developments that consistently reinforce that message."
+    }
+  ]
+}

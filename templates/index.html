@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcard Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 24px;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        p.desc {
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        form {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            margin-bottom: 28px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 14px;
+            border: 1px solid #d7dbe3;
+            border-radius: 12px;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #5b8def;
+        }
+
+        button {
+            margin-top: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            padding: 18px;
+            backface-visibility: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+
+        .flashcard-back {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            transform: rotateY(180deg);
+        }
+
+        .label {
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        .card-text {
+            padding-top: 20px;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .hint {
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            text-decoration: none;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="{{ url_for('index') }}">{{ ui.nav_flashcards }}</a>
+            <a href="{{ url_for('quiz') }}">{{ ui.nav_quiz }}</a>
+        </div>
+        <h1>Tạo Flashcard từ bài giảng</h1>
+        <p class="desc">
+            Dán nội dung bài giảng vào bên dưới, hệ thống sẽ tạo 10 flashcard ôn tập.
+        </p>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <textarea
+                name="lecture_text"
+                placeholder="Dán bài giảng vào đây..."
+            >{{ lecture_text }}</textarea>
+            <br />
+            <button type="submit">Tạo flashcard</button>
+        </form>
+
+        {% if flashcards %}
+            <h2>Kết quả</h2>
+            <p class="hint">Bấm vào thẻ để lật mặt trước / mặt sau.</p>
+
+            <div class="cards-grid">
+                {% for card in flashcards %}
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="label">Câu hỏi</div>
+                                <div class="card-text">{{ card.question }}</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="label">Đáp án</div>
+                                <div class="card-text">{{ card.answer }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ ui.nav_quiz }}</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 24px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        h1 { margin-bottom: 8px; }
+        .desc { color: #666; margin-bottom: 24px; }
+
+        form, .panel {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 14px;
+            border: 1px solid #d7dbe3;
+            border-radius: 12px;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+        }
+
+        button {
+            margin-top: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-block {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .option {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .result-good {
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .result-bad {
+            color: #991b1b;
+            font-weight: bold;
+        }
+
+        .answer-box {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #d1d5db;
+            color: #374151;
+        }
+
+        .score {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="{{ url_for('index') }}">{{ ui.nav_flashcards }}</a>
+            <a href="{{ url_for('quiz') }}">{{ ui.nav_quiz }}</a>
+        </div>
+
+        <h1>{{ ui.quiz_heading }}</h1>
+        <p class="desc">{{ ui.quiz_description }}</p>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if saved_notice %}
+            <div class="success">{{ saved_notice }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <input type="hidden" name="action" value="generate">
+            <textarea
+                name="lecture_text"
+                placeholder="{{ ui.placeholder }}"
+            >{{ lecture_text }}</textarea>
+            <br />
+            <button type="submit">{{ ui.quiz_button }}</button>
+        </form>
+
+        {% if questions %}
+            <form method="POST" class="panel">
+                <input type="hidden" name="action" value="submit">
+
+                {% for q in questions %}
+                    {% set q_idx = loop.index0 %}
+                    <div class="question-block">
+                        <div class="question-title">{{ loop.index }}. {{ q.question }}</div>
+
+                        {% for option in q.options %}
+                            <label class="option">
+                                <input type="radio" name="q_{{ q_idx }}" value="{{ option }}">
+                                {{ option }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit">{{ ui.submit_quiz }}</button>
+            </form>
+        {% endif %}
+
+        {% if results %}
+            <div class="panel">
+                <div class="score">{{ ui.score }}: {{ results.score }}/{{ results.total }}</div>
+
+                {% for item in results.result_items %}
+                    <div class="question-block">
+                        <div class="question-title">{{ item.index }}. {{ item.question }}</div>
+
+                        {% if item.is_correct %}
+                            <div class="result-good">✔ Correct</div>
+                        {% else %}
+                            <div class="result-bad">✘ Incorrect</div>
+                        {% endif %}
+
+                        <div class="answer-box">
+                            <div><strong>{{ ui.your_answer }}:</strong> {{ item.selected if item.selected else ui.not_answered }}</div>
+                            <div><strong>{{ ui.correct_answer }}:</strong> {{ item.correct_answer }}</div>
+                            <div><strong>{{ ui.explanation }}:</strong> {{ item.explanation }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
