@@ -1,0 +1,48 @@
+# =====================
+# Python
+# =====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =====================
+# Virtual environment
+# =====================
+venv/
+.env/
+.venv/
+
+# =====================
+# Environment variables
+# =====================
+.env
+
+# =====================
+# VSCode / IDE
+# =====================
+.vscode/
+.idea/
+
+# =====================
+# OS files
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Logs
+# =====================
+*.log
+
+# =====================
+# Local data (IMPORTANT)
+# =====================
+generated_quiz.json
+cache_data.json
+
+# =====================
+# Secrets (nếu có)
+# =====================
+config.py
+secrets.json

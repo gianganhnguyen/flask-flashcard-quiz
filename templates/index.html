@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flashcard Generator</title>
+    <title>{{ ui.page_title }}</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: Arial, sans-serif;
@@ -23,9 +21,22 @@
             padding: 24px;
         }
 
-        h1 {
-            margin-bottom: 8px;
+        .nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
         }
+
+        .nav a {
+            text-decoration: none;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        h1 { margin-bottom: 8px; }
 
         p.desc {
             color: #666;
@@ -51,12 +62,14 @@
             outline: none;
         }
 
-        textarea:focus {
-            border-color: #5b8def;
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
         }
 
         button {
-            margin-top: 14px;
             background: #2563eb;
             color: white;
             border: none;
@@ -68,6 +81,14 @@
 
         button:hover {
             background: #1d4ed8;
+        }
+
+        .secondary-btn {
+            background: #475569;
+        }
+
+        .secondary-btn:hover {
+            background: #334155;
         }
 
         .error {
@@ -150,18 +171,109 @@
             font-size: 13px;
         }
 
-        .nav {
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(3px);
             display: flex;
-            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 28px 32px;
+            border-radius: 18px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            min-width: 280px;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #dbeafe;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: #374151;
+            text-align: center;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 460px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+            padding: 24px;
+        }
+
+        .modal-title {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        .modal-message {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .info-banner {
+            background: #e0f2fe;
+            color: #075985;
+            padding: 12px 14px;
+            border-radius: 10px;
             margin-bottom: 20px;
         }
-        .nav a {
-            text-decoration: none;
-            background: white;
-            padding: 10px 14px;
-            border-radius: 10px;
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -171,38 +283,40 @@
             <a href="{{ url_for('index') }}">{{ ui.nav_flashcards }}</a>
             <a href="{{ url_for('quiz') }}">{{ ui.nav_quiz }}</a>
         </div>
-        <h1>Tạo Flashcard từ bài giảng</h1>
-        <p class="desc">
-            Dán nội dung bài giảng vào bên dưới, hệ thống sẽ tạo 10 flashcard ôn tập.
-        </p>
 
-        {% if error %}
-            <div class="error">{{ error }}</div>
+        <h1>{{ ui.heading }}</h1>
+        <p class="desc">{{ ui.description }}</p>
+
+        {% if info_message %}
+            <div class="info-banner">{{ info_message }}</div>
         {% endif %}
 
-        <form method="POST">
+        <form method="POST" onsubmit="return startLoading('{{ ui.loading_flashcards }}')">
             <textarea
                 name="lecture_text"
-                placeholder="Dán bài giảng vào đây..."
+                placeholder="{{ ui.placeholder }}"
             >{{ lecture_text }}</textarea>
-            <br />
-            <button type="submit">Tạo flashcard</button>
+
+            <div class="button-row">
+                <button type="submit">{{ ui.button }}</button>
+                <button type="submit" class="secondary-btn">{{ ui.regenerate_button }}</button>
+            </div>
         </form>
 
         {% if flashcards %}
-            <h2>Kết quả</h2>
-            <p class="hint">Bấm vào thẻ để lật mặt trước / mặt sau.</p>
+            <h2>{{ ui.result }}</h2>
+            <p class="hint">{{ ui.hint }}</p>
 
             <div class="cards-grid">
                 {% for card in flashcards %}
                     <div class="flashcard" onclick="this.classList.toggle('flipped')">
                         <div class="flashcard-inner">
                             <div class="flashcard-front">
-                                <div class="label">Câu hỏi</div>
+                                <div class="label">{{ ui.question_label }}</div>
                                 <div class="card-text">{{ card.question }}</div>
                             </div>
                             <div class="flashcard-back">
-                                <div class="label">Đáp án</div>
+                                <div class="label">{{ ui.answer_label }}</div>
                                 <div class="card-text">{{ card.answer }}</div>
                             </div>
                         </div>
@@ -211,5 +325,60 @@
             </div>
         {% endif %}
     </div>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <div class="loading-text">{{ ui.loading_flashcards }}</div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitle">{{ ui.popup_title_error }}</h3>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-actions">
+                <button type="button" onclick="closeModal()">{{ ui.popup_close }}</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isSubmitting = false;
+
+        function startLoading(message) {
+            if (isSubmitting) {
+                return false;
+            }
+
+            isSubmitting = true;
+
+            const overlay = document.getElementById("loadingOverlay");
+            const loadingText = overlay.querySelector(".loading-text");
+
+            loadingText.textContent = message || "Processing, please wait...";
+            overlay.classList.remove("hidden");
+            document.body.classList.add("loading");
+
+            document.querySelectorAll("button, input[type='submit']").forEach(btn => {
+                btn.disabled = true;
+            });
+
+            return true;
+        }
+
+        function closeModal() {
+            document.getElementById("messageModal").classList.add("hidden");
+        }
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const serverError = {{ error|tojson }};
+            if (serverError) {
+                document.getElementById("modalTitle").textContent = {{ ui.popup_title_error|tojson }};
+                document.getElementById("modalMessage").textContent = serverError;
+                document.getElementById("messageModal").classList.remove("hidden");
+            }
+        });
+    </script>
 </body>
 </html>

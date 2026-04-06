@@ -37,7 +37,11 @@
         }
 
         h1 { margin-bottom: 8px; }
-        .desc { color: #666; margin-bottom: 24px; }
+
+        .desc {
+            color: #666;
+            margin-bottom: 24px;
+        }
 
         form, .panel {
             background: white;
@@ -58,8 +62,14 @@
             outline: none;
         }
 
-        button {
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
             margin-top: 14px;
+        }
+
+        button {
             background: #2563eb;
             color: white;
             border: none;
@@ -69,17 +79,29 @@
             font-size: 15px;
         }
 
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-btn {
+            background: #475569;
+        }
+
+        .secondary-btn:hover {
+            background: #334155;
         }
 
         .success {
             background: #dcfce7;
             color: #166534;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-banner {
+            background: #e0f2fe;
+            color: #075985;
             padding: 12px 14px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -124,6 +146,103 @@
             font-weight: bold;
             margin-bottom: 18px;
         }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 28px 32px;
+            border-radius: 18px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            min-width: 280px;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #dbeafe;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: #374151;
+            text-align: center;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 460px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+            padding: 24px;
+        }
+
+        .modal-title {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        .modal-message {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -136,26 +255,29 @@
         <h1>{{ ui.quiz_heading }}</h1>
         <p class="desc">{{ ui.quiz_description }}</p>
 
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
-
         {% if saved_notice %}
             <div class="success">{{ saved_notice }}</div>
         {% endif %}
 
-        <form method="POST">
+        {% if info_message %}
+            <div class="info-banner">{{ info_message }}</div>
+        {% endif %}
+
+        <form method="POST" onsubmit="return startLoading('{{ ui.loading_quiz }}')">
             <input type="hidden" name="action" value="generate">
             <textarea
                 name="lecture_text"
                 placeholder="{{ ui.placeholder }}"
             >{{ lecture_text }}</textarea>
-            <br />
-            <button type="submit">{{ ui.quiz_button }}</button>
+
+            <div class="button-row">
+                <button type="submit">{{ ui.quiz_button }}</button>
+                <button type="submit" class="secondary-btn">{{ ui.quiz_regenerate_button }}</button>
+            </div>
         </form>
 
         {% if questions %}
-            <form method="POST" class="panel">
+            <form method="POST" class="panel" onsubmit="return startLoading('{{ ui.loading_submit }}')">
                 <input type="hidden" name="action" value="submit">
 
                 {% for q in questions %}
@@ -185,9 +307,9 @@
                         <div class="question-title">{{ item.index }}. {{ item.question }}</div>
 
                         {% if item.is_correct %}
-                            <div class="result-good">✔ Correct</div>
+                            <div class="result-good">✔ {{ ui.correct_text }}</div>
                         {% else %}
-                            <div class="result-bad">✘ Incorrect</div>
+                            <div class="result-bad">✘ {{ ui.incorrect_text }}</div>
                         {% endif %}
 
                         <div class="answer-box">
@@ -200,5 +322,60 @@
             </div>
         {% endif %}
     </div>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <div class="loading-text">{{ ui.loading_quiz }}</div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitle">{{ ui.popup_title_error }}</h3>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-actions">
+                <button type="button" onclick="closeModal()">{{ ui.popup_close }}</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isSubmitting = false;
+
+        function startLoading(message) {
+            if (isSubmitting) {
+                return false;
+            }
+
+            isSubmitting = true;
+
+            const overlay = document.getElementById("loadingOverlay");
+            const loadingText = overlay.querySelector(".loading-text");
+
+            loadingText.textContent = message || "Processing, please wait...";
+            overlay.classList.remove("hidden");
+            document.body.classList.add("loading");
+
+            document.querySelectorAll("button, input[type='submit']").forEach(btn => {
+                btn.disabled = true;
+            });
+
+            return true;
+        }
+
+        function closeModal() {
+            document.getElementById("messageModal").classList.add("hidden");
+        }
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const serverError = {{ error|tojson }};
+            if (serverError) {
+                document.getElementById("modalTitle").textContent = {{ ui.popup_title_error|tojson }};
+                document.getElementById("modalMessage").textContent = serverError;
+                document.getElementById("messageModal").classList.remove("hidden");
+            }
+        });
+    </script>
 </body>
 </html>

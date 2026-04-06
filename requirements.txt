@@ -1,5 +1,4 @@
-
-Flask==3.0.3
+Flask
 google-genai
 pydantic
 gunicorn
